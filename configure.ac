@@ -9,6 +9,7 @@ CXX="$CXX -std=c++17 -fno-exceptions -Wno-deprecated-declarations"
 
 AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
+rm -f a.out.js a.out.wasm a.wasm  # Remove dummy wasm files created by macros
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR([src/lib/fst.cc])
@@ -182,5 +183,15 @@ AC_RUN_IFELSE([AC_LANG_PROGRAM([
 
 AC_CHECK_LIB([dl], dlopen, [DL_LIBS=-ldl])
 AC_SUBST([DL_LIBS])
+
+# Check if we are using emscripten (emconfigure)
+AC_MSG_CHECKING([for emscripten])
+AS_IF([test "x$EMSCRIPTEN" != "x"], [
+  AC_MSG_RESULT([yes])
+  AM_CONDITIONAL([EMSCRIPTEN], [true])
+], [
+  AC_MSG_RESULT([no])
+  AM_CONDITIONAL([EMSCRIPTEN], [false])
+])
 
 AC_OUTPUT
